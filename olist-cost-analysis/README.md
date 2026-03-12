@@ -35,6 +35,78 @@ Pipeline construído em 5 notebooks progressivos com stack moderna de dados:
 
 ---
 
+## 📈 Visualizações
+
+### DRE Consolidada — Waterfall
+> Cascata financeira completa: da Receita Bruta ao EBITDA estimado, passando por cancelamentos, impostos, CPV e custo operacional.
+
+![DRE Waterfall](figures/01_waterfall_dre.png)
+
+---
+
+### Princípio de Pareto — Receita por Categoria
+> 17 categorias concentram 80% da receita líquida total. As barras em ciano representam esse grupo estratégico.
+
+![Pareto Receita](figures/02_pareto_receita.png)
+
+---
+
+### Quadrante Estratégico — Receita × Margem
+> Posicionamento de cada categoria nos quatro quadrantes: Alto Volume/Alta Margem, Nicho Rentável, Alto Volume/Baixa Margem e Baixo Impacto. O tamanho dos pontos representa o volume de pedidos.
+
+![Quadrante Estratégico](figures/03_quadrante_estrategico.png)
+
+---
+
+### Heatmap de Correlação — Métricas Financeiras
+> Correlação entre receita, CPV, margem, EBITDA, ticket médio, frete, NPS e prazo de entrega por categoria.
+
+![Heatmap Correlação](figures/04_heatmap_correlacao.png)
+
+---
+
+### Tendência Mensal — Receita e MoM
+> Evolução mês a mês da receita bruta e custo de frete, com variação percentual MoM (Month-over-Month) em barras.
+
+![Tendência Mensal](figures/05_tendencia_mensal.png)
+
+---
+
+### Matriz de Risco — Margem × Cancelamento
+> Identificação das categorias críticas: baixa margem combinada com alta taxa de cancelamento representa o maior risco financeiro.
+
+![Matriz de Risco](figures/06_matriz_risco.png)
+
+---
+
+### Distribuição de Ticket por Categoria
+> Boxplot das top 12 categorias por receita, mostrando mediana, dispersão e outliers de preço.
+
+![Boxplot Ticket](figures/07_boxplot_ticket.png)
+
+---
+
+### Dashboard Executivo — KPIs Consolidados
+> Painel com os principais indicadores financeiros do projeto: receita, lucro, EBITDA, margem, pedidos e top 8 categorias por EBITDA.
+
+![Dashboard Final](figures/08_dashboard_final.png)
+
+---
+
+### Avaliação do Modelo Preditivo
+> Curvas ROC e Precision-Recall dos 3 modelos, Matriz de Confusão e distribuição de probabilidades do melhor modelo (Gradient Boosting, ROC-AUC = 0.897).
+
+![Model Evaluation](figures/09_model_evaluation.png)
+
+---
+
+### Feature Importance — Random Forest
+> Top 15 variáveis preditoras de cancelamento, mostrando quais características do pedido mais influenciam o risco.
+
+![Feature Importance](figures/10_feature_importance.png)
+
+---
+
 ## 🏗️ Arquitetura
 
 ```
@@ -87,7 +159,7 @@ CSV (Olist Kaggle)
 ### ☁️ Infraestrutura
 - **Google Colab** — ambiente de desenvolvimento e execução dos notebooks
 - **Google Drive** — persistência dos arquivos Parquet e figuras entre sessões
-- **Azure Blob Storage** — Storage Account provisionado com Hierarchical Namespace (ADLS Gen2) como camada de armazenamento em nuvem
+- **Azure Blob Storage** — Storage Account provisionado com Hierarchical Namespace (ADLS Gen2)
 
 ---
 
@@ -96,13 +168,24 @@ CSV (Olist Kaggle)
 ```
 olist-cost-analysis/
 ├── notebooks/
-│   ├── 01_ingestao.ipynb          # PySpark + PyArrow
-│   ├── 02_transformacao.ipynb     # DuckDB + pandas + numpy + DRE
-│   ├── 03_analise_cpv.ipynb       # SQL avançado: Window Functions, Pareto, Giro
-│   ├── 04_visualizacao.ipynb      # Matplotlib + Seaborn — 8 figuras
-│   └── 05_modelo.ipynb            # Scikit-learn — predição de cancelamentos
+│   ├── 01_ingestao.ipynb
+│   ├── 02_transformacao.ipynb
+│   ├── 03_analise_cpv.ipynb
+│   ├── 04_visualizacao.ipynb
+│   └── 05_modelo.ipynb
 ├── sql/
-│   └── queries_cpv.sql            # Queries SQL standalone comentadas
+│   └── queries_cpv.sql
+├── figures/
+│   ├── 01_waterfall_dre.png
+│   ├── 02_pareto_receita.png
+│   ├── 03_quadrante_estrategico.png
+│   ├── 04_heatmap_correlacao.png
+│   ├── 05_tendencia_mensal.png
+│   ├── 06_matriz_risco.png
+│   ├── 07_boxplot_ticket.png
+│   ├── 08_dashboard_final.png
+│   ├── 09_model_evaluation.png
+│   └── 10_feature_importance.png
 ├── .gitignore
 ├── requirements.txt
 └── README.md
