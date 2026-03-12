@@ -5,9 +5,6 @@ data/
 .env
 *.env
 
-# Figuras geradas
-figures/
-
 # Python
 __pycache__/
 *.pyc
