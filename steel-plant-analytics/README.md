@@ -124,14 +124,23 @@ steel-plant-analytics/
 
 ## 🤖 Modelo Preditivo
 
-| Modelo | ROC-AUC | CV-AUC |
-|---|---|---|
-| Logistic Regression | ~0.88 | ~0.87 |
-| Random Forest | ~0.89 | ~0.91 |
-| **Gradient Boosting** ✅ | **~0.89** | **~0.91** |
+| Modelo | ROC-AUC | CV-AUC | Avg Precision |
+|---|---|---|---|
+| Logistic Regression | 0.9858 | 0.9845 | 0.5954 |
+| Random Forest | 0.9852 | 0.9822 | 0.5755 |
+| **Gradient Boosting** ✅ | **0.9910** | **0.9896** | **0.7278** |
 
 **Features principais:** consumo lag 1h/24h, média rolling, hora do dia (sin/cos),
 dia da semana (sin/cos), turno, fim de semana.
+
+> Modelo treinado **sem data leakage** — o valor atual de consumo foi excluído das features,
+> utilizando apenas histórico passado (lags e médias móveis) para prever picos futuros.
+
+**Simulação de impacto operacional:**
+- 176 picos identificados no conjunto de teste
+- Modelo capturou **60,9%** dos picos com antecipação
+- Consumo em risco identificado: **10.932 kWh**
+- Economia potencial estimada: **R$ 1.147,93** (R$ 0,70/kWh, redução de 15% com antecipação)
 
 ---
 
