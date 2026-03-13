@@ -1,0 +1,24 @@
+# Steel Plant Analytics — Dependências
+# Instalar no Google Colab: !pip install -r requirements.txt
+
+# Core
+pandas>=2.0.0
+numpy>=1.24.0
+pyarrow>=14.0.0
+
+# SQL Engine
+duckdb>=0.9.0
+
+# Azure Storage
+azure-storage-blob>=12.19.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+
+# Visualização
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilitários
+python-dotenv>=1.0.0
+openpyxl>=3.1.0

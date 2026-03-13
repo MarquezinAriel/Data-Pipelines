@@ -1,0 +1,16 @@
+# Dados — não subir no GitHub
+data/
+
+# Credenciais
+.env
+*.env
+connection_strings.txt
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Sistema
+.DS_Store
+Thumbs.db
