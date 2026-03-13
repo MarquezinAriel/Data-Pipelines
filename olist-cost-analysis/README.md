@@ -26,12 +26,11 @@ Pipeline construído em 5 notebooks progressivos com stack moderna de dados:
 5. **Modelo Preditivo** — Scikit-learn → classificador de cancelamento com 3 algoritmos
 
 ### Result
-- **Receita Líquida Total analisada:** R$ 12,5M
-- **Lucro Bruto:** R$ 2,3M | **EBITDA Estimado:** R$ -1,3M
-- **17 categorias** concentram 80% da receita (Princípio de Pareto) — de 59 analisadas
-- **Taxa de cancelamento:** 0,6% sobre 99.145 pedidos
-- **Melhor modelo preditivo:** Gradient Boosting com ROC-AUC de **0.897**
-- Modelo capaz de identificar **R$ 6.728 em receita em risco** de cancelamento (24% do total em risco)
+Pipeline end-to-end entregou visibilidade financeira completa sobre 99.145 pedidos e 59 categorias. 
+A análise revelou que **17 categorias concentram 80% da receita** enquanto o EBITDA consolidado 
+é negativo — indicando que o custo operacional corrói o lucro bruto gerado. O modelo preditivo 
+(Gradient Boosting, ROC-AUC **0.897**) identificou padrões de cancelamento que representam 
+risco financeiro mensurável, conectando diretamente a análise de dados à tomada de decisão.
 
 ---
 
