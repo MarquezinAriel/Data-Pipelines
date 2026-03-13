@@ -37,6 +37,13 @@ Pipeline construído em 5 notebooks progressivos com stack moderna de dados:
 
 ## 📈 Visualizações
 
+### Dashboard Executivo — KPIs Consolidados
+> Painel com os principais indicadores financeiros do projeto: receita, lucro, EBITDA, margem, pedidos e top 8 categorias por EBITDA.
+
+![Dashboard Final](figures/08_dashboard_final.png)
+
+---
+
 ### DRE Consolidada — Waterfall
 > Cascata financeira completa: da Receita Bruta ao EBITDA estimado, passando por cancelamentos, impostos, CPV e custo operacional.
 
@@ -83,13 +90,6 @@ Pipeline construído em 5 notebooks progressivos com stack moderna de dados:
 > Boxplot das top 12 categorias por receita, mostrando mediana, dispersão e outliers de preço.
 
 ![Boxplot Ticket](figures/07_boxplot_ticket.png)
-
----
-
-### Dashboard Executivo — KPIs Consolidados
-> Painel com os principais indicadores financeiros do projeto: receita, lucro, EBITDA, margem, pedidos e top 8 categorias por EBITDA.
-
-![Dashboard Final](figures/08_dashboard_final.png)
 
 ---
 
