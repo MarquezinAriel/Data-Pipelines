@@ -8,7 +8,7 @@
 
 ## 📋 Contexto
 
-Siderúrgicas como a **Gerdau (segmento Corte e Dobra)** operam com processos contínuos
+Siderúrgicas como a **Siderurgica X (segmento Corte e Dobra ao qual trabalhei)** operam com processos contínuos
 em múltiplos turnos, consumindo grandes volumes de energia elétrica. A ausência de
 visibilidade sobre o consumo por turno e a incapacidade de antecipar picos geram
 custos operacionais evitáveis e dificultam o acompanhamento do **OEE energético**.
@@ -48,7 +48,7 @@ dados diretamente do **SAP/HANA** da planta e os processaria em tempo próximo a
                                 └──────────────────┘
 ```
 
-**Referência arquitetural:** Em produção (Gerdau), a ingestão viria de views SAP/HANA
+**Referência arquitetural:** Em produção (Siderurgica X), a ingestão viria de views SAP/HANA
 via `hdbcli`, substituindo o CSV do Kaggle. O código já inclui o bloco comentado
 de conexão SAP/HANA no Notebook 01.
 
