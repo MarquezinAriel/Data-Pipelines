@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Forçar reconhecimento de arquivos SQL
+*.sql linguist-language=SQL
+
+# Forçar reconhecimento de arquivos ARFF como Data (ou outra linguagem que você queira)
+*.arff linguist-language=ARFF
