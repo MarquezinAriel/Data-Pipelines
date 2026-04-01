@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.idea/
+.vscode/
+*.log
+/tmp/
+delta/
+spark-warehouse/
+metastore_db/
+derby.log

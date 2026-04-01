@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  ingestion:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: coingecko_ingestion
+    volumes:
+      - ../pipeline:/app/pipeline
+      - delta_storage:/tmp/delta
+    environment:
+      - DELTA_TABLE_PATH=/tmp/delta/crypto_prices
+      - PYTHONUNBUFFERED=1
+    restart: "no"
+
+volumes:
+  delta_storage:
