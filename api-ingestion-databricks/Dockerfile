@@ -12,9 +12,10 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY requirements.txt .
+# Caminhos relativos à raiz do repositório (context: .)
+COPY api-ingestion-databricks/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY pipeline/ ./pipeline/
+COPY api-ingestion-databricks/pipeline/ ./pipeline/
 
 CMD ["python", "pipeline/ingest_coingecko.py"]
