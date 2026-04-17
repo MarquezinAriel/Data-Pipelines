@@ -7,7 +7,7 @@ Dashboard desenvolvido em **Power BI** com foco em análise de vendas, margem e 
 ## 🖼️ Visão Geral
 
 ### 1. Evolução de Vendas
-![Evolução de Vendas](screenshots/01-evolucao-vendas.png)
+![Evolução de Vendas](screenshots/01-evolucao-vendas.PNG)
 
 Visão consolidada de vendas brutas, líquidas, quantidade vendida e crescimento vs. ano anterior. Permite análise temporal por ano, trimestre e categoria.
 
