@@ -116,5 +116,6 @@ Moedas monitoradas: Bitcoin · Ethereum · Solana · Cardano · Polkadot
 
 **Ariel Marquezin**
 Analista de Supply Chain & Dados | Power BI · SQL · Python · SAP S/4HANA
+
 🔗 [linkedin.com/in/ariel-marquezin](https://linkedin.com/in/ariel-marquezin)
 🐙 [github.com/MarquezinAriel](https://github.com/MarquezinAriel)
