@@ -12,17 +12,17 @@ Dashboard desenvolvido em **Power BI** com foco em análise de vendas, margem e 
 Visão consolidada de vendas brutas, líquidas, quantidade vendida e crescimento vs. ano anterior. Permite análise temporal por ano, trimestre e categoria.
 
 ### 2. Margem por Promoção
-![Margem por Promoção](screenshots/02-margem-promocao.png)
+![Margem por Promoção](screenshots/02-margem-promocao.PNG)
 
 Comparativo de eficiência entre campanhas promocionais com e sem desconto. Inclui avaliação automática de cada promoção (Excelente / Atenção ao desconto / Revisar) com base na margem resultante.
 
 ### 3. Produtos e Categorias
-![Produtos e Categorias](screenshots/03-produtos-categorias.png)
+![Produtos e Categorias](screenshots/03-produtos-categorias.PNG)
 
 Análise de participação no total de vendas e eficiência de margem por categoria, tipo de loja e marca. Destaque para o **Bullet Chart** comparando margem real vs. meta de 55%, e **Heatmap** de margem por categoria x tipo de promoção.
 
 ### 4. Ranking de Produtos
-![Ranking de Produtos](screenshots/04-ranking-produtos.png)
+![Ranking de Produtos](screenshots/04-ranking-produtos.PNG)
 
 Drill-down de performance por produto, tipo de loja e categoria. Inclui ranking de margem por produto e ano, com tabela hierárquica de participação no total de vendas.
 
