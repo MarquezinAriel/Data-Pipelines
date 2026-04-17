@@ -1,182 +1,120 @@
-# 🪙 Projeto 2: Ingestão Avançada de API com Databricks (Spark + Delta)
+# 🪙 API Ingestion com Databricks — CoinGecko + PySpark + Delta Lake
 
-![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
-![PySpark](https://img.shields.io/badge/PySpark-3.5-orange?logo=apachespark)
-![Delta Lake](https://img.shields.io/badge/Delta_Lake-3.1-blue)
-![Databricks](https://img.shields.io/badge/Databricks-Community-red?logo=databricks)
-![API](https://img.shields.io/badge/API-CoinGecko-green)
-
-Projeto de **engenharia de dados** demonstrando ingestão avançada de dados de uma API pública REST diretamente no **Databricks Community Edition**, utilizando **PySpark** para transformação e **Delta Lake** como destino final com suporte a UPSERT e Time Travel.
+Pipeline de ingestão de dados de criptomoedas utilizando **PySpark** e **Delta Lake** no **Azure Databricks**. O projeto implementa o padrão ETL completo com UPSERT incremental, schema tipado e Time Travel.
 
 ---
 
-## 🗺️ Arquitetura
+## 🏗️ Arquitetura do Pipeline
 
 ```
-┌──────────────┐     HTTP GET      ┌─────────────────┐     PySpark      ┌───────────────┐
-│  CoinGecko   │ ────────────────► │  ingest_coin-   │ ───────────────► │  Delta Lake   │
-│  REST API    │                   │  gecko.py       │   UPSERT/MERGE   │  (DBFS/local) │
-└──────────────┘                   └─────────────────┘                  └───────────────┘
-      ▲                                                                          │
-      │  5 moedas: BTC, ETH, SOL, ADA, DOT                              Time Travel ✔
-      │  Sem autenticação necessária                                     Schema ✔
+CoinGecko API
+     │
+     ▼
+Extração (requests)
+     │
+     ▼
+Transformação (PySpark — schema tipado)
+     │
+     ▼
+UPSERT — Delta Lake (MERGE)
+     │
+     ▼
+Validação + Time Travel + SQL
 ```
 
 ---
 
-## 📁 Estrutura do Projeto
+## 🖼️ Execução no Databricks
+
+### 4. Transformação — PySpark DataFrame
+![Transformação](screenshots/04-transformacao-dataframe.png)
+
+Schema tipado com 14 campos, 5 criptomoedas carregadas e transformadas em DataFrame PySpark em 12s.
+
+### 5. Carga — UPSERT no Delta Lake
+![Carga Delta](screenshots/05-carga-delta.png)
+
+Criação da tabela gerenciada `crypto_ingestion.crypto_prices` com suporte a MERGE incremental nas execuções seguintes.
+
+### 6. Validação — Leitura do Delta Lake
+![Validação](screenshots/06-validacao-delta.png)
+
+Leitura de volta do Delta Lake confirmando integridade dos dados após a carga.
+
+### 7. Time Travel — Histórico do Delta Lake
+![Time Travel](screenshots/07-time-travel.png)
+
+Histórico de versões da tabela Delta com rastreabilidade completa de operações e timestamps.
+
+### 8. Consulta SQL no Delta Lake
+![SQL](screenshots/08-consulta-sql.png)
+
+Query SQL diretamente na tabela Delta com agregações e ordenação por market cap rank.
+
+---
+
+## 💡 Destaques Técnicos
+
+- **Schema tipado** com `StructType` — garante consistência e evita inferência automática custosa
+- **UPSERT com MERGE** — padrão incremental que atualiza registros existentes e insere novos sem duplicatas
+- **Delta Lake gerenciado** — suporte nativo a ACID transactions e Time Travel
+- **Time Travel** — rastreabilidade completa do histórico de versões da tabela
+- **SQL sobre Delta** — consultas analíticas diretamente na camada de armazenamento
+
+---
+
+## 🛠️ Stack
+
+| Tecnologia | Uso |
+|---|---|
+| Azure Databricks | Ambiente de execução |
+| PySpark | Transformação e processamento distribuído |
+| Delta Lake | Armazenamento com ACID + Time Travel |
+| Python (requests) | Extração via API REST |
+| SQL | Consultas analíticas sobre Delta Lake |
+
+---
+
+## 📁 Estrutura do Repositório
 
 ```
 api-ingestion-databricks/
 │
-├── notebooks/
-│   └── coingecko_ingestion.py      # Notebook Databricks (importar como .py)
-│
-├── pipeline/
-│   └── ingest_coingecko.py         # Pipeline ETL principal (rodar localmente)
-│
-├── docker/
-│   ├── Dockerfile                  # Imagem Python + Java + PySpark
-│   └── docker-compose.yml          # Orquestração local
-│
-├── requirements.txt                # Dependências Python
+├── coingecko_ingestion.py    # Versão notebook — exploração interativa no Databricks
+├── ingest_coingecko.py       # Versão modular — estrutura de produção
+├── screenshots/              # Prints da execução no Databricks
+│   ├── 04-transformacao-dataframe.png
+│   ├── 05-carga-delta.png
+│   ├── 06-validacao-delta.png
+│   ├── 07-time-travel.png
+│   └── 08-consulta-sql.png
 └── README.md
 ```
 
 ---
 
-## 🚀 Como Usar
+## 📄 Sobre os Arquivos
 
-### Opção 1 — Databricks Community Edition (recomendado)
+**`coingecko_ingestion.py` — Notebook interativo**
+Versão estruturada como notebook Databricks, com células Markdown, `display()` e execução passo a passo. Ideal para exploração, documentação visual e apresentação do pipeline no ambiente Databricks.
 
-1. Acesse [community.cloud.databricks.com](https://community.cloud.databricks.com)
-2. Crie um cluster com **Databricks Runtime 13.x (inclui Delta Lake)**
-3. No menu lateral: **Workspace → Import**
-4. Importe o arquivo `notebooks/coingecko_ingestion.py` como tipo **Source File**
-5. Abra o notebook e execute célula por célula (`Shift + Enter`)
-
-> ⚠️ O caminho `/mnt/delta/crypto_prices` usa o DBFS padrão do Community Edition.
-> Não é necessário configurar nada adicional.
+**`ingest_coingecko.py` — Versão modular para produção**
+Versão refatorada com funções isoladas (`fetch_coin_data`, `transform`, `load_to_delta`), docstrings, tratamento de erros com retry e rate limit, e ponto de entrada `run_pipeline()`. Estrutura pronta para integração em jobs agendados, CI/CD ou orquestração com Airflow/Databricks Workflows.
 
 ---
 
-### Opção 2 — Local com Docker
+## 🗄️ Sobre os Dados
 
-**Pré-requisitos:** Docker e Docker Compose instalados.
+Fonte: **CoinGecko API** — API pública de dados de criptomoedas.
+Endpoint utilizado: `GET /api/v3/coins/markets?vs_currency=usd`
 
-```bash
-# Clone o repositório
-git clone https://github.com/SEU_USUARIO/api-ingestion-databricks.git
-cd api-ingestion-databricks
-
-# Suba o container
-docker compose -f docker/docker-compose.yml up --build
-```
-
-O pipeline irá:
-- Buscar dados da API CoinGecko
-- Transformar com PySpark
-- Salvar em Delta Lake local em `/tmp/delta/crypto_prices`
-
----
-
-### Opção 3 — Local sem Docker
-
-```bash
-# Crie o ambiente virtual
-python -m venv venv
-venv\Scripts\activate        # Windows
-# source venv/bin/activate   # Linux/Mac
-
-# Instale as dependências
-pip install -r requirements.txt
-
-# Execute o pipeline
-python pipeline/ingest_coingecko.py
-```
-
-> ⚠️ É necessário ter o **Java 8 ou 11** instalado para o PySpark funcionar localmente.
-> Download: https://adoptium.net/
-
----
-
-## 🔄 Fluxo ETL Detalhado
-
-### 1. Extração
-- Chamada `GET /coins/markets` na API CoinGecko
-- Parâmetros: moeda base USD, 5 criptomoedas, sem sparkline
-- Retry automático com backoff em caso de rate limit (HTTP 429)
-
-### 2. Transformação
-- Schema rígido definido via `StructType` do PySpark
-- Tipos convertidos explicitamente (float, int, datetime)
-- Coluna `ingested_at` adicionada com timestamp UTC de ingestão
-
-### 3. Carga (Delta Lake)
-- **Primeira execução:** cria tabela Delta com `overwrite`
-- **Execuções seguintes:** executa `MERGE (UPSERT)` pela chave `coin_id`
-- Registra histórico via **Time Travel** do Delta Lake
-
----
-
-## 📊 Tabela Delta gerada: `crypto_ingestion.crypto_prices`
-
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `coin_id` | STRING | Identificador único da moeda |
-| `symbol` | STRING | Símbolo (btc, eth...) |
-| `name` | STRING | Nome completo |
-| `current_price` | DOUBLE | Preço atual em USD |
-| `market_cap` | DOUBLE | Capitalização de mercado |
-| `market_cap_rank` | LONG | Ranking global |
-| `total_volume` | DOUBLE | Volume negociado 24h |
-| `high_24h` | DOUBLE | Máxima das últimas 24h |
-| `low_24h` | DOUBLE | Mínima das últimas 24h |
-| `price_change_24h` | DOUBLE | Variação absoluta 24h |
-| `price_change_pct_24h` | DOUBLE | Variação percentual 24h |
-| `circulating_supply` | DOUBLE | Oferta circulante |
-| `last_updated_api` | STRING | Timestamp da API |
-| `ingested_at` | TIMESTAMP | Timestamp de ingestão |
-
----
-
-## ⏱️ Time Travel (Delta Lake)
-
-```sql
--- Ver versão anterior dos dados
-SELECT * FROM crypto_ingestion.crypto_prices VERSION AS OF 0;
-
--- Ver histórico de operações
-DESCRIBE HISTORY crypto_ingestion.crypto_prices;
-```
-
----
-
-## 🛠️ Tecnologias
-
-| Tecnologia | Versão | Função |
-|---|---|---|
-| Python | 3.11 | Linguagem principal |
-| PySpark | 3.5 | Processamento distribuído |
-| Delta Lake | 3.1 | Armazenamento ACID |
-| Databricks | Community | Plataforma de execução |
-| CoinGecko API | v3 | Fonte de dados (gratuita) |
-| Docker | 24+ | Ambiente local reproduzível |
-
----
-
-## 📚 Conceitos Demonstrados
-
-- ✅ Ingestão de API REST com tratamento de erros e retry
-- ✅ Schema explícito com `StructType` no PySpark
-- ✅ Escrita e UPSERT em **Delta Lake**
-- ✅ **Time Travel** para auditoria de dados
-- ✅ Separação de camadas ETL (Extract / Transform / Load)
-- ✅ Compatibilidade Databricks + ambiente local
+Moedas monitoradas: Bitcoin · Ethereum · Solana · Cardano · Polkadot
 
 ---
 
 ## 👤 Autor
 
-**Ariel Marquez**
-[GitHub](https://github.com/MarquezinAriel)
+**Ariel Marquezin**
+Analista de Supply Chain & Dados | Power BI · SQL · Python · SAP S/4HANA
+🔗 [linkedin.com/in/ariel-marquezin](https://linkedin.com/in/ariel-marquezin)
+🐙 [github.com/MarquezinAriel](https://github.com/MarquezinAriel)

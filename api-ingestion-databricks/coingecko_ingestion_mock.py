@@ -2,7 +2,7 @@
 # MAGIC %md
 # MAGIC # 🪙 Projeto 2: Ingestão Avançada de API com Databricks (Spark + Delta)
 # MAGIC
-# MAGIC **Fonte:** CoinGecko API (pública, sem autenticação)
+# MAGIC **Fonte:** CoinGecko API (pública, sem autenticação) — dados simulados para ambiente sem acesso externo
 # MAGIC **Destino:** Delta Lake no DBFS
 # MAGIC
 # MAGIC ### Fluxo
@@ -13,26 +13,15 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 1. Instalação de dependências
+# MAGIC ## 1. Imports e Configurações
 
 # COMMAND ----------
 
-# MAGIC %pip install requests delta-spark
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## 2. Imports e Configurações
-
-# COMMAND ----------
-
-import requests
 import json
-import time
 from datetime import datetime
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, current_timestamp
+from pyspark.sql.functions import col
 from pyspark.sql.types import (
     StructType, StructField, StringType,
     DoubleType, LongType, TimestampType
@@ -40,19 +29,16 @@ from pyspark.sql.types import (
 from delta.tables import DeltaTable
 
 # ── Configurações ──────────────────────────────────────────
-API_BASE_URL    = "https://api.coingecko.com/api/v3"
-COINS           = ["bitcoin", "ethereum", "solana", "cardano", "polkadot"]
-VS_CURRENCY     = "usd"
-DELTA_TABLE_PATH = "/mnt/delta/crypto_prices"
+DELTA_TABLE_PATH = "dbfs:/user/hive/warehouse/crypto_ingestion.db/crypto_prices"
 DELTA_TABLE_NAME = "crypto_prices"
-DATABASE_NAME   = "crypto_ingestion"
+DATABASE_NAME    = "crypto_ingestion"
 
 print("✅ Configurações carregadas.")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 3. Definição do Schema
+# MAGIC ## 2. Definição do Schema
 
 # COMMAND ----------
 
@@ -78,44 +64,68 @@ print("✅ Schema definido com", len(SCHEMA.fields), "campos.")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4. Extração — CoinGecko API
+# MAGIC ## 3. Dados Simulados — CoinGecko API
+# MAGIC
+# MAGIC > Em ambiente de produção, este bloco seria substituído por uma chamada real à API:
+# MAGIC > `GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,...`
 
 # COMMAND ----------
 
-def fetch_coin_data(coins, vs_currency="usd", max_retries=3):
-    url = f"{API_BASE_URL}/coins/markets"
-    params = {
-        "vs_currency": vs_currency,
-        "ids": ",".join(coins),
-        "order": "market_cap_desc",
-        "per_page": len(coins),
-        "page": 1,
-        "sparkline": False,
-    }
-    for attempt in range(1, max_retries + 1):
-        try:
-            print(f"🔄 Tentativa {attempt}/{max_retries}...")
-            resp = requests.get(url, params=params, timeout=10)
-            resp.raise_for_status()
-            data = resp.json()
-            print(f"✅ {len(data)} moedas recebidas.")
-            return data
-        except requests.exceptions.HTTPError as e:
-            print(f"⚠️ HTTPError: {e}")
-            if resp.status_code == 429:
-                time.sleep(5 * attempt)
-        except Exception as e:
-            print(f"❌ Erro: {e}")
-            time.sleep(5)
-    raise RuntimeError("❌ Falha após todas as tentativas.")
+raw_data = [
+    {
+        "id": "bitcoin", "symbol": "btc", "name": "Bitcoin",
+        "current_price": 77551, "market_cap": 1552354239246,
+        "market_cap_rank": 1, "total_volume": 59556019701,
+        "high_24h": 78240, "low_24h": 74273,
+        "price_change_24h": 3192.61, "price_change_percentage_24h": 4.29355,
+        "circulating_supply": 20017171.0,
+        "last_updated": "2026-04-17T17:53:52.049Z"
+    },
+    {
+        "id": "ethereum", "symbol": "eth", "name": "Ethereum",
+        "current_price": 1547.89, "market_cap": 186432178900,
+        "market_cap_rank": 2, "total_volume": 18234567890,
+        "high_24h": 1589.12, "low_24h": 1498.34,
+        "price_change_24h": 49.55, "price_change_percentage_24h": 3.31,
+        "circulating_supply": 120450000.0,
+        "last_updated": "2026-04-17T17:53:52.049Z"
+    },
+    {
+        "id": "solana", "symbol": "sol", "name": "Solana",
+        "current_price": 132.45, "market_cap": 68123456789,
+        "market_cap_rank": 3, "total_volume": 4123456789,
+        "high_24h": 138.90, "low_24h": 128.10,
+        "price_change_24h": 4.35, "price_change_percentage_24h": 3.40,
+        "circulating_supply": 514200000.0,
+        "last_updated": "2026-04-17T17:53:52.049Z"
+    },
+    {
+        "id": "cardano", "symbol": "ada", "name": "Cardano",
+        "current_price": 0.6234, "market_cap": 21987654321,
+        "market_cap_rank": 4, "total_volume": 987654321,
+        "high_24h": 0.6510, "low_24h": 0.5980,
+        "price_change_24h": 0.0254, "price_change_percentage_24h": 4.25,
+        "circulating_supply": 35270000000.0,
+        "last_updated": "2026-04-17T17:53:52.049Z"
+    },
+    {
+        "id": "polkadot", "symbol": "dot", "name": "Polkadot",
+        "current_price": 3.87, "market_cap": 5678901234,
+        "market_cap_rank": 5, "total_volume": 345678901,
+        "high_24h": 4.02, "low_24h": 3.71,
+        "price_change_24h": 0.16, "price_change_percentage_24h": 4.31,
+        "circulating_supply": 1467000000.0,
+        "last_updated": "2026-04-17T17:53:52.049Z"
+    },
+]
 
-raw_data = fetch_coin_data(COINS, VS_CURRENCY)
-print(json.dumps(raw_data[0], indent=2))   # preview do primeiro registro
+print(f"✅ {len(raw_data)} moedas carregadas.")
+print(json.dumps(raw_data[0], indent=2))
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 5. Transformação — PySpark DataFrame
+# MAGIC ## 4. Transformação — PySpark DataFrame
 
 # COMMAND ----------
 
@@ -147,7 +157,7 @@ display(df)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 6. Carga — UPSERT no Delta Lake
+# MAGIC ## 5. Carga — UPSERT no Delta Lake
 
 # COMMAND ----------
 
@@ -180,17 +190,20 @@ load_to_delta(df, DELTA_TABLE_PATH, DELTA_TABLE_NAME, DATABASE_NAME)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 7. Validação e Análise
+# MAGIC ## 6. Validação — Leitura do Delta Lake
 
 # COMMAND ----------
 
-# Lendo de volta do Delta Lake
 df_delta = spark.read.format("delta").load(DELTA_TABLE_PATH)
 display(df_delta.orderBy(col("market_cap_rank")))
 
 # COMMAND ----------
 
-# Histórico do Delta Lake (time travel)
+# MAGIC %md
+# MAGIC ## 7. Time Travel — Histórico do Delta Lake
+
+# COMMAND ----------
+
 delta_table = DeltaTable.forPath(spark, DELTA_TABLE_PATH)
 display(delta_table.history())
 
