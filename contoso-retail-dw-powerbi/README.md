@@ -45,6 +45,7 @@ Drill-down de performance por produto, tipo de loja e categoria. Inclui ranking 
 |---|---|
 | Power BI Desktop | Desenvolvimento do dashboard |
 | DAX | Medidas calculadas (margem, crescimento YoY, % participação) |
+| Script HTML | Construção do Bullet Chart e Heatmap |
 | Power Query | Transformação e modelagem dos dados |
 | SQL Server (ContosoRetailDW) | Fonte de dados original |
 
